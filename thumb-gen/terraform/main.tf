@@ -10,13 +10,13 @@ provider "google" {
 
 
 resource "google_storage_bucket" "images" {
-  name     = "gcloud-prj-484723-images"
-  location = "US"
+  name     = "obrazkowe-wiadro"
+  location = "us-central1"
 }
 
 resource "google_storage_bucket" "thumbnails" {
-  name     = "gcloud-prj-484723-thumbnails"
-  location = "US"
+  name     = "thumbnailowe-wiadro-2"
+  location = "us-central1"
 }
 
 
@@ -37,11 +37,11 @@ resource "google_cloudfunctions_function" "validator" {
   entry_point = "validate_image"
   
   source_archive_bucket = google_storage_bucket.images.name
-  source_archive_object = "validator.zip"
+  source_archive_object = "valid_func.zip"
 
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = google_storage_bucket.images.name
+    resource   = google_storage_bucket.images.id
   }
 
   environment_variables = {
@@ -55,7 +55,7 @@ resource "google_cloudfunctions_function" "thumbnailer" {
   entry_point = "create_thumbnail"
 
   source_archive_bucket = google_storage_bucket.images.name
-  source_archive_object = "thumbnailer.zip"
+  source_archive_object = "thumb_func.zip"
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
@@ -72,21 +72,25 @@ resource "google_cloudfunctions_function" "thumbnailer" {
 
 
 resource "google_project_iam_member" "cf_validator_role" {
+  project = "gcloud-prj-484723"
   role   = "roles/pubsub.publisher"
-  member = "serviceAccount:${google_cloudfunctions_function.validator.service_account_email}"
+  member = "serviceAccount:service-agent@gcloud-prj-484723.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "cf_thumbnailer_role" {
+  project = "gcloud-prj-484723"
   role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${google_cloudfunctions_function.thumbnailer.service_account_email}"
+  member = "serviceAccount:service-agent@gcloud-prj-484723.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "cf_monitoring_role" {
+  project = "gcloud-prj-484723"
   role   = "roles/monitoring.metricWriter"
-  member = "serviceAccount:${google_cloudfunctions_function.validator.service_account_email}"
+  member = "serviceAccount:service-agent@gcloud-prj-484723.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "cf_monitoring_role_thumbnailer" {
+  project = "gcloud-prj-484723"
   role   = "roles/monitoring.metricWriter"
-  member = "serviceAccount:${google_cloudfunctions_function.thumbnailer.service_account_email}"
+  member = "serviceAccount:service-agent@gcloud-prj-484723.iam.gserviceaccount.com"
 }

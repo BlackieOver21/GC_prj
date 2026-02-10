@@ -1,11 +1,14 @@
-from google.cloud import monitoring_v3
-from google.cloud import pubsub_v1
-import base64
-import time
+from google.cloud import monitoring_v3, pubsub_v1
+import base64, time, os
+
+PROJECT_ID = os.environ.get("PROJECT_ID")
+
+if not PROJECT_ID:
+    raise RuntimeError("PROJECT_ID environment variable is not set")
+
+PROJECT_NAME = f"projects/{PROJECT_ID}"
 
 client = monitoring_v3.MetricServiceClient()
-project_name = f"projects/{'gcloud-prj-484723'}"
-project_id = "gcloud-prj-484723"
 metric_type = 'custom.googleapis.com/image_validation'
 
 publisher = pubsub_v1.PublisherClient()
@@ -40,5 +43,5 @@ def send_custom_metric(metric_name, value):
         })
     ]
     
-    client.create_time_series(name=project_name, time_series=[series])
+    client.create_time_series(name=PROJECT_NAME, time_series=[series])
     print(f"Custom metric {metric_name} sent with value {value}")

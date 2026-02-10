@@ -1,13 +1,15 @@
 from PIL import Image
-from google.cloud import storage
-import io
-import time
-import base64
-from google.cloud import monitoring_v3
+from google.cloud import storage, monitoring_v3
+import io, time, base64, os
 
+PROJECT_ID = os.environ.get("PROJECT_ID")
+
+if not PROJECT_ID:
+    raise RuntimeError("PROJECT_ID not set. Please set PROJECT_ID environment variable and redeploy the project.")
+
+PROJECT_NAME = f"projects/{PROJECT_ID}"
 
 client = monitoring_v3.MetricServiceClient()
-project_name = f"projects/{'gcloud-prj-484723'}"
 
 def create_thumbnail(event, context):
     file_name = base64.b64decode(event["data"]).decode("utf-8")
@@ -44,5 +46,5 @@ def send_custom_metric(metric_name, value):
             })
     ]
     
-    client.create_time_series(name=project_name, time_series=[series])
+    client.create_time_series(name=PROJECT_NAME, time_series=[series])
     print(f"Custom metric {metric_name} sent with value {value}")

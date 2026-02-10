@@ -49,13 +49,13 @@ resource "google_pubsub_topic" "image_events" {
 # Cloud Functions - source code
 
 
-resource "google_storage_bucket_object" "thumb_func.zip" {
+resource "google_storage_bucket_object" "thumb_func_zip" {
   name   = "thumb_func.zip"
   bucket = google_storage_bucket.source_code.name
   source = "${var.root}/functions/thumb_func/thumb_func.zip"
 }
 
-resource "google_storage_bucket_object" "valid_func.zip" {
+resource "google_storage_bucket_object" "valid_func_zip" {
   name   = "valid_func.zip"
   bucket = google_storage_bucket.source_code.name
   source = "${var.root}/functions/valid_func/valid_func.zip"
@@ -71,7 +71,7 @@ resource "google_cloudfunctions_function" "validator" {
   entry_point = "validate_image"
   
   source_archive_bucket = google_storage_bucket.source_code.name
-  source_archive_object = "valid_func.zip"
+  source_archive_object = google_storage_bucket_object.valid_func_zip.name
 
   event_trigger {
     event_type = "google.storage.object.finalize"
@@ -90,7 +90,7 @@ resource "google_cloudfunctions_function" "thumbnailer" {
   entry_point = "create_thumbnail"
 
   source_archive_bucket = google_storage_bucket.source_code.name
-  source_archive_object = "thumb_func.zip"
+  source_archive_object = google_storage_bucket_object.thumb_func_zip.name
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"

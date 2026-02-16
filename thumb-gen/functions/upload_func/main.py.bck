@@ -1,0 +1,23 @@
+from flask import Flask, request, jsonify
+from google.cloud import storage
+import uuid
+
+app = Flask(__name__)
+storage_client = storage.Client()
+BUCKET_NAME = "your-upload-bucket"
+
+@app.route("/", methods=["POST"])
+def upload_image():
+    if "image" not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files["image"]
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    filename = f"{uuid.uuid4()}_{file.filename}"
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(filename)
+    blob.upload_from_file(file)
+    return jsonify({"message": "Uploaded successfully", "filename": filename})
+

@@ -12,7 +12,7 @@ client = monitoring_v3.MetricServiceClient()
 metric_type = 'custom.googleapis.com/image_validation'
 
 publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path("gcloud-prj-2-487221", "image-events")
+topic_path = publisher.topic_path(PROJECT_ID, "image-events")
 
 def validate_image(event, context):
     file_name = event["name"]

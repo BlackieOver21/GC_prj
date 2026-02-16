@@ -1,0 +1,4 @@
+form.tfvars
+project_id = "gcloud-prj-2-487221"
+region     = "us-central1"
+root	   = "/home/glibbers/gcloud-prj-2/GC_prj/thumb-gen"

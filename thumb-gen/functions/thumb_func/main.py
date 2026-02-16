@@ -22,6 +22,7 @@ def create_thumbnail(event, context):
     blob = bucket.blob(file_name)
     
     image = Image.open(io.BytesIO(blob.download_as_bytes()))
+    image = image.convert("RGB")
     image.thumbnail((200, 200))
     
     thumb_bucket = client_storage.bucket("thumbnailowe-wiadro")

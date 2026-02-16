@@ -1,0 +1,6 @@
+thumb-gen/frontend/package.json
+thumb-gen/terraform/.terraform.lock.hcl
+thumb-gen/terraform/.terraform/providers/registry.terraform.io/hashicorp/google/7.19.0/linux_amd64/LICENSE.txt
+thumb-gen/terraform/.terraform/providers/registry.terraform.io/hashicorp/google/7.19.0/linux_amd64/terraform-provider-google_v7.19.0_x5
+thumb-gen/terraform/terraform.tfstate
+thumb-gen/terraform/terraform.tfstate.backup
